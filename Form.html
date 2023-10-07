@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+      label {
+        float: left;
+        width: 150px;
+      }
+      #container {
+        width: 700px;
+        margin: auto;
+        background-color: beige;
+      }
+      main {
+        padding: 50px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      table, th, td {
+        border: 1px solid #ccc;
+      }
+      th, td {
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+</head>
+
+<body id="container">
+    <main>
+      <h2>Feedback Form</h2>
+      <h3>Please provide your feedback</h3>
+      <br /><br />
+
+      <form id="myForm">
+        <label>Title*:</label>
+        <input
+          type="radio"
+          name="title"
+          id="miss"
+          value="miss"
+          required="required"
+        />
+        Miss
+        <input
+          type="radio"
+          name="title"
+          id="mr"
+          value="mr"
+          required="required"
+        />
+        Mr.
+        <input
+          type="radio"
+          name="title"
+          id="mrs"
+          value="mrs"
+          required="required"
+        />
+        Mrs. <br /><br />
+
+        <label for="firstName">First Name*:</label>
+        <input
+          type="text"
+          name="firstName"
+          id="firstName"
+          placeholder="First Name"
+          required
+        />
+        <br /><br />
+
+        <div id="error_firstName" style="display: none; color: red">
+          Invalid first name, please enter a valid name
+          <br />
+        </div>
+
+        <label for="lastName">Last Name*:</label>
+        <input
+          type="text"
+          name="lastName"
+          id="lastName"
+          placeholder="Last Name"
+          required
+        />
+        <br /><br />
+
+        <div id="error_lastName" style="display: none; color: red">
+          Invalid last name, please enter a valid name
+          <br />
+        </div>
+
+        <label for="emailId">Email Id*:</label>
+        <input
+          type="text"
+          name="emailId"
+          id="emailId"
+          placeholder="yourname@domain.com"
+          required
+        />
+        <br /><br />
+
+        <div id="error_emailId" style="display: none; color: red">
+          Invalid email address, please enter a valid email, Use @northeastern.edu domain
+          <br />
+        </div>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input
+          type="text"
+          name="phoneNumber"
+          id="phoneNumber"
+          placeholder="xxx-xxx-xxxx"
+          required
+        />
+        <br /><br />
+
+        <div id="error_phoneNumber" style="display: none; color: red">
+          Invalid Phone Number, please enter a valid phone number in xxx-xxx-xxxx format
+          <br />
+        </div>
+
+        <label for="zip">Zip Code:</label>
+        <input
+          type="text"
+          name="zip"
+          id="zip"
+          placeholder="xxxxxx"
+          required
+        />
+        <br /><br />
+
+        <div id="error_zip" style="display: none; color: red">
+          Invalid Zip Code
+          <br />
+        </div>
+
+        <label for="comment">Comments:</label>
+        <textarea
+          name="text"
+          id="comment"
+          placeholder="Your Comments (max 20 characters)"
+          cols="30"
+          rows="10"
+          maxlength="20"
+          required
+        ></textarea>
+        <br /><br />
+
+        <div id="error_comment" style="display: none; color: red">
+          Please Enter Some Comment
+          <br />
+        </div>
+
+        <label for="rating">Would you Like to Oder Something?*:</label>
+        <select name="rating" id="rating" onchange="changeOrder()">
+          <option value="select">Select</option>
+          <option value="Burger">Burger</option>
+          <option value="Fries">Fries</option>
+          <option value="Coke">Coke</option>
+          <option value="Brownie">Brownie</option>
+          <option value="Meal">Meal</option>
+        </select>
+        <br />
+        <br />
+
+        <div id="ratingD"></div>
+        <br />
+        <div id="ratingDesc" style="display: none;">
+          <label for="comments">Additional Comments*:</label>
+          <textarea
+            name="text"
+            id="inp"
+            placeholder="Please describe your opinions"
+            cols="30"
+            rows="10"
+            required
+          ></textarea>
+          <br /><br />
+        </div>
+
+        <input id="submit" type="Submit" value="Submit My Form" disabled />
+        <input type="Reset" />
+        <br /><br />
+
+      </form>
+
+      <table id="submissionTable" style="display: none;">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email ID</th>
+            <th>Phone Number</th>
+            <th>Zip Code</th>
+            <th>Comments</th>
+            <th>Order</th>
+            <th>Quantity</th>
+            <th>Order Comments</th>          
+            
+          </tr>
+        </thead>
+        <tbody id="submissionTableBody"></tbody>
+      </table>
+    </main>
+
+    <script>
+      var form = document.getElementById("myForm");
+      form.addEventListener("submit", submitted);
+      var validName = false;
+      var validLastName = false;
+      var validEmail = false;
+      var validPhone = false;
+      var validZip = false;
+      var validComment = false;
+      var order=false;
+      var OrderMade=''
+      var size=''
+
+      var regExName = /^[a-zA-Z]{3,}$/; 
+      var regExEmail = /^[A-Za-z0-9._%+-]+@northeastern\.edu$/;
+      var regExPhone = /\d{3}-?\d{3}-\d{4}$/;
+      var regExZip = /^\d{6}$/;
+
+      function enableSubmitButton() {
+        var submitButton = document.getElementById("submit");
+        submitButton.disabled = !(validName && validLastName && validEmail && validPhone && validZip && validComment);
+      }
+      function checkOrder(x) {
+        size=x===1?'Medium':'Large'
+
+}
+
+      function changeOrder() {
+        let Selected = document.getElementById("rating").value;
+        if (Selected == "select") {
+          order=false
+          document.getElementById("ratingD").classList.add("hidden");
+          document.querySelector("#ratingD").innerHTML = "";
+          document.getElementById("inp").value = "";
+        } else {
+          order=true
+          OrderMade=Selected
+          document.getElementById("ratingD").classList.remove("hidden");
+          document.getElementById("ratingDesc").style.display='';
+          document.getElementById("inp").value = "";
+          document.querySelector("#ratingD").innerHTML =
+            '<label>Rating Details*:</label><input type="checkbox" onchange="checkOrder(1)" id="medium" name="medium" value="medium">\n ' +
+            ("Medium "+Selected) +
+            '\n<input type="checkbox" onchange="checkOrder(2)" id="large" name="large" value="large">\n' +
+            ("Large " + Selected) +
+            "\n";
+        }
+}
+
+      var firstName = document.getElementById("firstName");
+      firstName.addEventListener("input", validate);
+
+      var lastName = document.getElementById("lastName");
+      lastName.addEventListener("input", validate);
+
+      var emailId = document.getElementById("emailId");
+      emailId.addEventListener("input", validate);
+
+      var phoneNumber = document.getElementById("phoneNumber");
+      phoneNumber.addEventListener("input", validate);
+
+      var zip = document.getElementById("zip");
+      zip.addEventListener("input", validate);
+
+      var comment = document.getElementById("comment");
+      comment.addEventListener("input", validate);
+
+      function appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp) {
+        var submissionTableBody = document.getElementById("submissionTableBody");
+
+        var newRow = submissionTableBody.insertRow();
+
+        var title = newRow.insertCell(0);
+        var firstName = newRow.insertCell(1);
+        var lastName = newRow.insertCell(2);
+        var email = newRow.insertCell(3);
+        var phone = newRow.insertCell(4);
+        var zip = newRow.insertCell(5);
+        var comment = newRow.insertCell(6);
+        var or=newRow.insertCell(7);
+        var si=newRow.insertCell(8);
+        var inp=newRow.insertCell(9);
+        
+        title.textContent = submittedTitle;
+        firstName.textContent = submittedFirstName;
+        lastName.textContent=submittedLastName;
+        email.textContent=submittedEmailId;
+        phone.textContent=submittedPhoneNumber;
+        zip.textContent=submittedZip;
+        comment.textContent=submittedComment
+        or.textContent=OrderMade
+        si.textContent=size
+        inp.textContent=submittedImp
+
+
+
+      }
+
+      function validate(e) {
+        var value = e.target.value;
+        var type = this.id;
+        var em = "error_" + type;
+
+        switch (type) {
+          case "firstName":
+            if (!value.trim().match(regExName)) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validName = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validName = true;
+            }
+            break;
+          case "lastName":
+            if (!value.trim().match(regExName)) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validLastName = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validLastName = true;
+            }
+            break;
+          case "emailId":
+            if (!value.trim().match(regExEmail)) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validEmail = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validEmail = true;
+            }
+            break;
+
+          case "phoneNumber":
+            if (!value.trim().match(regExPhone)) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validPhone = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validPhone = true;
+            }
+            break;
+          case "zip":
+            if (!value.trim().match(regExZip)) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validZip = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validZip = true;
+            }
+            break;
+          case "comment":
+            if (!value.trim()) {
+              document.getElementById(em).style.display = "block";
+              this.style.border = "2px solid red";
+              validComment = false;
+            } else {
+              document.getElementById(em).style.display = "none";
+              this.style.border = "";
+              validComment = true;
+            }
+            break;
+        }
+        enableSubmitButton();
+      }
+
+      function submitted(e) {
+        e.preventDefault(); 
+        if (validName && validEmail && validPhone && validLastName && validZip && validComment) {
+          var submittedTitle = document.querySelector('input[name="title"]:checked').value;
+          var submittedFirstName = document.getElementById("firstName").value;
+          var submittedLastName = document.getElementById("lastName").value;
+          var submittedEmailId = document.getElementById("emailId").value;
+          var submittedPhoneNumber = document.getElementById("phoneNumber").value;
+          var submittedZip = document.getElementById("zip").value;
+          var submittedComment = document.getElementById("comment").value;
+          var submittedImp = document.getElementById("inp").value;
+
+          appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp);
+          
+          var submissionTable = document.getElementById("submissionTable");
+
+          submissionTable.style.display = "block";
+
+          
+          document.getElementById("ratingDesc").style.display=none;
+          form.reset();
+          validName = validLastName = validEmail = validPhone = validZip = validComment = false;
+          enableSubmitButton();
+          
+        } else {
+          alert("Please enter valid information");
+        }
+}
+    </script>
+</body>
+</html>
