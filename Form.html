@@ -220,6 +220,8 @@
       var validPhone = false;
       var validZip = false;
       var validComment = false;
+      var validSelection= false;
+      var validSize=false
       var order=false;
       var OrderMade=''
       var size=''
@@ -231,33 +233,67 @@
 
       function enableSubmitButton() {
         var submitButton = document.getElementById("submit");
-        submitButton.disabled = !(validName && validLastName && validEmail && validPhone && validZip && validComment);
+        submitButton.disabled = !(validName && validLastName && validEmail && validPhone && validZip && validComment && validSelection && validSize);
       }
-      function checkOrder(x) {
-        size=x===1?'Medium':'Large'
-
-}
+      
 
       function changeOrder() {
         let Selected = document.getElementById("rating").value;
         if (Selected == "select") {
           order=false
+          validSelection=false
+          enableSubmitButton();
+          
           document.getElementById("ratingD").classList.add("hidden");
+          
+          document.getElementById("ratingD").style.display='none';
           document.querySelector("#ratingD").innerHTML = "";
           document.getElementById("inp").value = "";
+          document.getElementById("ratingDesc").style.display='none';
         } else {
           order=true
+          validSelection=true
+          enableSubmitButton();
           OrderMade=Selected
           document.getElementById("ratingD").classList.remove("hidden");
+          
+          document.getElementById("ratingD").style.display='';
           document.getElementById("ratingDesc").style.display='';
           document.getElementById("inp").value = "";
           document.querySelector("#ratingD").innerHTML =
-            '<label>Rating Details*:</label><input type="checkbox" onchange="checkOrder(1)" id="medium" name="medium" value="medium">\n ' +
+            '<label>Rating Details*:</label><input type="checkbox" class="checkbox"  id="medium" name="group" value="medium">\n ' +
             ("Medium "+Selected) +
-            '\n<input type="checkbox" onchange="checkOrder(2)" id="large" name="large" value="large">\n' +
+            '\n<input type="checkbox" class="checkbox"  id="large" name="group" value="large">\n' +
             ("Large " + Selected) +
             "\n";
         }
+
+
+const checkboxes = document.querySelectorAll('.checkbox');
+
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function () {
+        if (this.checked) {
+            // Uncheck all other checkboxes in the group
+            validSize=true
+            enableSubmitButton()
+            checkboxes.forEach(otherCheckbox => {
+                if (otherCheckbox !== this) {
+                    otherCheckbox.checked = false;
+                }
+            });
+            size=this.value
+            
+            // Handle the selection change here
+            console.log("Selected option: " + this.value);
+        }
+        else{
+          validSize=false
+          size=''
+          enableSubmitButton()
+        }
+    });
+});
 }
 
       var firstName = document.getElementById("firstName");
@@ -404,9 +440,11 @@
 
           submissionTable.style.display = "block";
 
+          document.getElementById("ratingD").style.display='none';
           
+          document.getElementById("ratingDesc").style.display='none';
           form.reset();
-          validName = validLastName = validEmail = validPhone = validZip = validComment = false;
+          validName = validLastName = validEmail = validPhone = validZip = validComment = validSize=validSelection=false;
           enableSubmitButton();
           
         } else {
