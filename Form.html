@@ -304,7 +304,7 @@ checkboxes.forEach(checkbox => {
             size=this.value
             
             // Handle the selection change here
-            console.log("Selected option: " + this.value);
+           // console.log("Selected option: " + this.value);
         }
         else{
           validSize=false
@@ -342,7 +342,7 @@ checkboxes.forEach(checkbox => {
 
       function appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp,submittedStreet) {
         var submissionTableBody = document.getElementById("submissionTableBody");
-        console.log(submittedStreet," Street==")
+        
         var newRow = submissionTableBody.insertRow();
 
         var title = newRow.insertCell(0);
@@ -466,9 +466,9 @@ checkboxes.forEach(checkbox => {
 
       function submitted(e) {
         e.preventDefault();
-        console.log('here') 
+        
         if (validName && validEmail && validPhone && validLastName && validZip && validComment) {
-          console.log('there')
+
           var submittedTitle = document.querySelector('input[name="title"]:checked').value;
           var submittedFirstName = document.getElementById("firstName").value;
           var submittedLastName = document.getElementById("lastName").value;
@@ -500,7 +500,6 @@ checkboxes.forEach(checkbox => {
 }
 
 function cli(){
-        console.log("clicked")
           document.getElementById("ratingD").style.display='none';
           
           document.getElementById("ratingDesc").style.display='none';
