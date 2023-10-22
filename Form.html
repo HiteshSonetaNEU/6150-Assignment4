@@ -111,7 +111,7 @@
           <br />
         </div>
 
-        <label for="phoneNumber">Phone Number:</label>
+        <label for="phoneNumber">Phone Number*:</label>
         <input
           type="text"
           name="phoneNumber"
@@ -126,7 +126,23 @@
           <br />
         </div>
 
-        <label for="zip">Zip Code:</label>
+        <label for="street">Street Address*:</label>
+        <input
+          type="text"
+          name="street"
+          id="street"
+          placeholder="Street Address"
+          min="3"
+          required
+        />
+        <br /><br />
+
+        <div id="error_street" style="display: none; color: red">
+          Invalid last name, please enter a street address
+          <br />
+        </div>
+
+        <label for="zip">Zip Code*:</label>
         <input
           type="text"
           name="zip"
@@ -141,7 +157,7 @@
           <br />
         </div>
 
-        <label for="comment">Comments:</label>
+        <label for="comment">Comments*:</label>
         <textarea
           name="text"
           id="comment"
@@ -176,7 +192,7 @@
           <label for="comments">Additional Comments*:</label>
           <textarea
             name="text"
-            id="inp"
+            id="AC"
             placeholder="Please describe your opinions"
             cols="30"
             rows="10"
@@ -186,7 +202,7 @@
         </div>
 
         <input id="submit" type="Submit" value="Submit My Form" disabled />
-        <input type="Reset" />
+        <input type="Reset" onclick="cli()" />
         <br /><br />
 
       </form>
@@ -199,6 +215,7 @@
             <th>Last Name</th>
             <th>Email ID</th>
             <th>Phone Number</th>
+            <th>Street Address</th>
             <th>Zip Code</th>
             <th>Comments</th>
             <th>Order</th>
@@ -222,6 +239,8 @@
       var validComment = false;
       var validSelection= false;
       var validSize=false
+      var validAdditional =false
+      var validStreet=false
       var order=false;
       var OrderMade=''
       var size=''
@@ -233,10 +252,10 @@
 
       function enableSubmitButton() {
         var submitButton = document.getElementById("submit");
-        submitButton.disabled = !(validName && validLastName && validEmail && validPhone && validZip && validComment && validSelection && validSize);
+        submitButton.disabled = !(validName && validLastName && validEmail && validPhone && validZip && validComment && validSelection && validSize && validAdditional && validStreet );
       }
       
-
+      
       function changeOrder() {
         let Selected = document.getElementById("rating").value;
         if (Selected == "select") {
@@ -248,7 +267,7 @@
           
           document.getElementById("ratingD").style.display='none';
           document.querySelector("#ratingD").innerHTML = "";
-          document.getElementById("inp").value = "";
+          document.getElementById("AC").value = "";
           document.getElementById("ratingDesc").style.display='none';
         } else {
           order=true
@@ -259,7 +278,7 @@
           
           document.getElementById("ratingD").style.display='';
           document.getElementById("ratingDesc").style.display='';
-          document.getElementById("inp").value = "";
+          document.getElementById("AC").value = "";
           document.querySelector("#ratingD").innerHTML =
             '<label>Rating Details*:</label><input type="checkbox" class="checkbox"  id="medium" name="group" value="medium">\n ' +
             ("Medium "+Selected) +
@@ -314,9 +333,16 @@ checkboxes.forEach(checkbox => {
       var comment = document.getElementById("comment");
       comment.addEventListener("input", validate);
 
-      function appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp) {
-        var submissionTableBody = document.getElementById("submissionTableBody");
+      var AC = document.getElementById("AC");
+      AC.addEventListener("input", validate);
 
+      
+      var street = document.getElementById("street");
+      street.addEventListener("input", validate);
+
+      function appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp,submittedStreet) {
+        var submissionTableBody = document.getElementById("submissionTableBody");
+        console.log(submittedStreet," Street==")
         var newRow = submissionTableBody.insertRow();
 
         var title = newRow.insertCell(0);
@@ -324,17 +350,19 @@ checkboxes.forEach(checkbox => {
         var lastName = newRow.insertCell(2);
         var email = newRow.insertCell(3);
         var phone = newRow.insertCell(4);
-        var zip = newRow.insertCell(5);
-        var comment = newRow.insertCell(6);
-        var or=newRow.insertCell(7);
-        var si=newRow.insertCell(8);
-        var inp=newRow.insertCell(9);
+        var street1 =newRow.insertCell(5);
+        var zip = newRow.insertCell(6);
+        var comment = newRow.insertCell(7);
+        var or=newRow.insertCell(8);
+        var si=newRow.insertCell(9);
+        var inp=newRow.insertCell(10);
         
         title.textContent = submittedTitle;
         firstName.textContent = submittedFirstName;
         lastName.textContent=submittedLastName;
         email.textContent=submittedEmailId;
         phone.textContent=submittedPhoneNumber;
+        street1.textContent=submittedStreet
         zip.textContent=submittedZip;
         comment.textContent=submittedComment
         or.textContent=OrderMade
@@ -418,13 +446,29 @@ checkboxes.forEach(checkbox => {
               validComment = true;
             }
             break;
+            case "AC":
+            if (!value.trim()) {
+              validAdditional = false;
+            } else {
+              validAdditional = true;
+            }
+            break;
+            case "street":
+            if (!value.trim()) {
+              validStreet = false;
+            } else {
+              validStreet = true;
+            }
+            break;
         }
         enableSubmitButton();
       }
 
       function submitted(e) {
-        e.preventDefault(); 
+        e.preventDefault();
+        console.log('here') 
         if (validName && validEmail && validPhone && validLastName && validZip && validComment) {
+          console.log('there')
           var submittedTitle = document.querySelector('input[name="title"]:checked').value;
           var submittedFirstName = document.getElementById("firstName").value;
           var submittedLastName = document.getElementById("lastName").value;
@@ -432,25 +476,39 @@ checkboxes.forEach(checkbox => {
           var submittedPhoneNumber = document.getElementById("phoneNumber").value;
           var submittedZip = document.getElementById("zip").value;
           var submittedComment = document.getElementById("comment").value;
-          var submittedImp = document.getElementById("inp").value;
+          var submittedImp = document.getElementById("AC").value;
+          var submittedStreet= document.getElementById("street").value;
 
-          appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp);
+          appendTableRow(submittedTitle,submittedFirstName,submittedLastName,submittedEmailId,submittedPhoneNumber,submittedZip,submittedComment,submittedImp,submittedStreet);
           
           var submissionTable = document.getElementById("submissionTable");
 
           submissionTable.style.display = "block";
+          submissionTable.style.border = "none";
+          
 
           document.getElementById("ratingD").style.display='none';
           
           document.getElementById("ratingDesc").style.display='none';
           form.reset();
-          validName = validLastName = validEmail = validPhone = validZip = validComment = validSize=validSelection=false;
+          validName = validLastName = validEmail = validPhone = validZip = validComment = validSize=validSelection=validAdditional=validStreet=false;
           enableSubmitButton();
           
         } else {
           alert("Please enter valid information");
         }
 }
+
+function cli(){
+        console.log("clicked")
+          document.getElementById("ratingD").style.display='none';
+          
+          document.getElementById("ratingDesc").style.display='none';
+          form.reset();
+          validName = validLastName = validEmail = validPhone = validZip = validComment = validSize=validSelection=validAdditional=validStreet=false;
+          enableSubmitButton();
+      }
+
     </script>
 </body>
 </html>
